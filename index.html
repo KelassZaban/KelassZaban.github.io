@@ -360,6 +360,7 @@
             min-height: 70px;
         }
 
+        /* ===== بخش زمان با AM/PM ===== */
         .datetime-section {
             background: white;
             border-radius: 16px;
@@ -393,7 +394,7 @@
         .datetime-group input[type="number"] {
             flex: 0 1 auto;
             min-width: 50px;
-            max-width: 80px;
+            max-width: 70px;
             padding: 0.5rem 0.3rem;
             border: 2px solid #e2e8f0;
             border-radius: 12px;
@@ -422,6 +423,101 @@
             font-weight: 300;
             font-size: 1rem;
             padding: 0 0.1rem;
+        }
+
+        /* ===== انتخابگر AM/PM ===== */
+        .ampm-selector {
+            display: inline-flex;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #f8fafc;
+        }
+
+        .ampm-selector button {
+            padding: 0.4rem 0.8rem;
+            border: none;
+            background: transparent;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #64748b;
+            font-family: 'Vazirmatn', sans-serif;
+        }
+
+        .ampm-selector button.active {
+            background: #6366f1;
+            color: white;
+        }
+
+        .ampm-selector button:hover:not(.active) {
+            background: #eef2ff;
+        }
+
+        /* ===== بخش نمره سفارشی ===== */
+        .custom-score-selector {
+            position: relative;
+            display: inline-block;
+            width: 70px;
+        }
+
+        .custom-score-selector .score-display {
+            width: 100%;
+            padding: 0.35rem 0.5rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-align: center;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #1e293b;
+        }
+
+        .custom-score-selector .score-display:hover {
+            border-color: #6366f1;
+        }
+
+        .custom-score-selector .score-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+            z-index: 100;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            margin-top: 4px;
+        }
+
+        .custom-score-selector .score-dropdown.open {
+            display: block;
+        }
+
+        .custom-score-selector .score-dropdown .score-option {
+            padding: 0.3rem 0.6rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #1e293b;
+        }
+
+        .custom-score-selector .score-dropdown .score-option:hover {
+            background: #eef2ff;
+            color: #4338ca;
+        }
+
+        .custom-score-selector .score-dropdown .score-option.selected {
+            background: #6366f1;
+            color: white;
         }
 
         .form-actions {
@@ -541,6 +637,9 @@
             cursor: pointer;
             transition: all 0.15s ease;
             color: #334155;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
         }
 
         .task-actions button:hover {
@@ -676,6 +775,7 @@
             background: #fee2e2;
         }
 
+        /* ===== فرم نظر جدید ===== */
         .comment-form {
             display: flex;
             flex-wrap: wrap;
@@ -698,32 +798,6 @@
             font-size: 0.75rem;
             font-weight: 600;
             color: #475569;
-        }
-
-        .comment-form input[type="number"] {
-            width: 55px;
-            padding: 0.35rem 0.2rem;
-            border: 2px solid #e2e8f0;
-            border-radius: 10px;
-            font-size: 0.85rem;
-            text-align: center;
-            background: white;
-            font-weight: 600;
-        }
-
-        .comment-form input[type="number"]:focus {
-            outline: none;
-            border-color: #6366f1;
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
-
-        .comment-form input[type="number"]::-webkit-outer-spin-button,
-        .comment-form input[type="number"]::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        .comment-form input[type="number"] {
-            -moz-appearance: textfield;
         }
 
         .comment-form input[type="text"] {
@@ -754,6 +828,9 @@
             transition: all 0.2s ease;
             white-space: nowrap;
             box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
         }
 
         .comment-form .btn-comment:hover {
@@ -771,7 +848,7 @@
             padding: 0.3rem 0;
         }
 
-        /* ===== بخش نظرات هنرجو ===== */
+        /* ===== بخش نمره هنرجو ===== */
         .student-comment-section {
             margin-top: 0.5rem;
             padding: 0.6rem 0.9rem;
@@ -934,7 +1011,6 @@
             background: #4f46e5 !important;
         }
 
-        /* ===== پنل هنرجو ===== */
         .student-task-wrapper {
             background: white;
             border-radius: 20px;
@@ -1033,7 +1109,7 @@
             color: #64748b;
         }
 
-        /* ===== بخش اطلاعات ورود هنرجو ===== */
+        /* ===== بخش اطلاعات ورود ===== */
         .login-info-section {
             background: #f8fafc;
             border-radius: 20px;
@@ -1102,7 +1178,6 @@
             font-size: 0.9rem;
         }
 
-        /* ===== تاریخچه ورود ===== */
         .login-history-section {
             background: #f8fafc;
             border-radius: 20px;
@@ -1174,7 +1249,7 @@
             .task-item { flex-direction: column; align-items: stretch; }
             .task-actions { justify-content: flex-start; }
             .panel-header { flex-direction: column; align-items: flex-start; }
-            .datetime-group input[type="number"] { min-width: 45px; max-width: 65px; }
+            .datetime-group input[type="number"] { min-width: 40px; max-width: 55px; }
             .student-task-wrapper { flex-direction: column; }
             .student-task-extra { min-width: 100px; }
             .login-info-box { padding: 1rem; }
@@ -1184,11 +1259,12 @@
             .login-history-table td { padding: 0.4rem 0.5rem; }
             .comment-form { flex-wrap: wrap; }
             .comment-form input[type="text"] { min-width: 80px; }
+            .ampm-selector button { padding: 0.3rem 0.5rem; font-size: 0.7rem; }
         }
 
         @media (max-width: 480px) {
             .container { padding: 1rem; border-radius: 20px; }
-            .datetime-group input[type="number"] { min-width: 38px; max-width: 55px; padding: 0.4rem 0.2rem; font-size: 0.8rem; }
+            .datetime-group input[type="number"] { min-width: 35px; max-width: 45px; padding: 0.4rem 0.2rem; font-size: 0.8rem; }
             .datetime-section { padding: 0.8rem; }
             .timer-container { min-width: 80px; }
             .timer-display { font-size: 0.9rem; min-width: 70px; }
@@ -1196,7 +1272,8 @@
             .login-history-table { font-size: 0.7rem; }
             .login-history-table th,
             .login-history-table td { padding: 0.3rem 0.4rem; }
-            .comment-form input[type="number"] { width: 45px; }
+            .ampm-selector button { padding: 0.2rem 0.4rem; font-size: 0.65rem; }
+            .custom-score-selector { width: 55px; }
         }
     </style>
 </head>
@@ -1315,7 +1392,7 @@
                 <div class="form-group">
                     <label>تاریخ شروع</label>
                     <div class="datetime-section">
-                        <div class="section-title">تاریخ (روز / ماه / سال)</div>
+                        <div class="section-title">تاریخ</div>
                         <div class="datetime-group">
                             <input type="number" id="startDay" placeholder="روز" min="1" max="31">
                             <span class="datetime-separator">/</span>
@@ -1323,13 +1400,18 @@
                             <span class="datetime-separator">/</span>
                             <input type="number" id="startYear" placeholder="سال" min="2020" max="2030">
                         </div>
-                        <div class="section-title" style="margin-top:0.7rem;">زمان (ساعت : دقیقه : ثانیه)</div>
+                        <div class="section-title" style="margin-top:0.7rem;">زمان</div>
                         <div class="datetime-group">
-                            <input type="number" id="startHour" placeholder="ساعت" min="0" max="23">
+                            <input type="number" id="startHour" placeholder="ساعت" min="1" max="12">
                             <span class="datetime-separator">:</span>
                             <input type="number" id="startMinute" placeholder="دقیقه" min="0" max="59">
                             <span class="datetime-separator">:</span>
                             <input type="number" id="startSecond" placeholder="ثانیه" min="0" max="59">
+                            <span class="datetime-separator" style="padding:0 0.3rem;">|</span>
+                            <div class="ampm-selector" id="startAmPm">
+                                <button class="active" data-value="AM">AM</button>
+                                <button data-value="PM">PM</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1337,7 +1419,7 @@
                 <div class="form-group">
                     <label>تاریخ پایان مهلت</label>
                     <div class="datetime-section">
-                        <div class="section-title">تاریخ (روز / ماه / سال)</div>
+                        <div class="section-title">تاریخ</div>
                         <div class="datetime-group">
                             <input type="number" id="endDay" placeholder="روز" min="1" max="31">
                             <span class="datetime-separator">/</span>
@@ -1345,13 +1427,18 @@
                             <span class="datetime-separator">/</span>
                             <input type="number" id="endYear" placeholder="سال" min="2020" max="2030">
                         </div>
-                        <div class="section-title" style="margin-top:0.7rem;">زمان (ساعت : دقیقه : ثانیه)</div>
+                        <div class="section-title" style="margin-top:0.7rem;">زمان</div>
                         <div class="datetime-group">
-                            <input type="number" id="endHour" placeholder="ساعت" min="0" max="23">
+                            <input type="number" id="endHour" placeholder="ساعت" min="1" max="12">
                             <span class="datetime-separator">:</span>
                             <input type="number" id="endMinute" placeholder="دقیقه" min="0" max="59">
                             <span class="datetime-separator">:</span>
                             <input type="number" id="endSecond" placeholder="ثانیه" min="0" max="59">
+                            <span class="datetime-separator" style="padding:0 0.3rem;">|</span>
+                            <div class="ampm-selector" id="endAmPm">
+                                <button class="active" data-value="AM">AM</button>
+                                <button data-value="PM">PM</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -1447,6 +1534,9 @@
         const endHour = document.getElementById('endHour');
         const endMinute = document.getElementById('endMinute');
         const endSecond = document.getElementById('endSecond');
+
+        const startAmPm = document.getElementById('startAmPm');
+        const endAmPm = document.getElementById('endAmPm');
 
         // ====== توابع همگام‌سازی ======
         function setSyncStatus(status) {
@@ -1551,6 +1641,25 @@
             }
         }
 
+        // ====== AM/PM ======
+        function setupAmPm(container) {
+            const buttons = container.querySelectorAll('button');
+            buttons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    buttons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+        }
+
+        function getAmPmValue(container) {
+            const active = container.querySelector('button.active');
+            return active ? active.dataset.value : 'AM';
+        }
+
+        setupAmPm(startAmPm);
+        setupAmPm(endAmPm);
+
         // ====== دریافت اطلاعات دستگاه و آیپی ======
         function getDeviceInfo() {
             const ua = navigator.userAgent;
@@ -1612,10 +1721,66 @@
             const year = d.getFullYear();
             const month = String(d.getMonth() + 1).padStart(2, '0');
             const day = String(d.getDate()).padStart(2, '0');
-            const hours = String(d.getHours()).padStart(2, '0');
+            
+            let hours = d.getHours();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12 || 12;
+            
             const minutes = String(d.getMinutes()).padStart(2, '0');
             const seconds = String(d.getSeconds()).padStart(2, '0');
-            return `${year}/${month}/${day} , ${hours}:${minutes}:${seconds}`;
+            return `${year}/${month}/${day} , ${hours}:${minutes}:${seconds} ${ampm}`;
+        }
+
+        // ====== گرفتن datetime از فیلدها با AM/PM ======
+        function getDatetimeFromFieldsWithAmPm(yearEl, monthEl, dayEl, hourEl, minuteEl, secondEl, ampmContainer) {
+            const y = parseInt(yearEl.value);
+            const m = parseInt(monthEl.value);
+            const d = parseInt(dayEl.value);
+            let h = parseInt(hourEl.value) || 0;
+            const min = parseInt(minuteEl.value) || 0;
+            const sec = parseInt(secondEl.value) || 0;
+            const ampm = getAmPmValue(ampmContainer);
+            
+            if (!y || !m || !d) return null;
+            if (y < 2020 || y > 2030) return null;
+            if (m < 1 || m > 12) return null;
+            if (d < 1 || d > 31) return null;
+            if (h < 1 || h > 12) return null;
+            
+            // تبدیل به ۲۴ ساعته
+            if (ampm === 'PM' && h !== 12) h += 12;
+            if (ampm === 'AM' && h === 12) h = 0;
+            
+            const date = new Date(y, m - 1, d, h, min, sec);
+            if (isNaN(date)) return null;
+            return date.toISOString().slice(0, 16);
+        }
+
+        function setDatetimeFieldsWithAmPm(yearEl, monthEl, dayEl, hourEl, minuteEl, secondEl, ampmContainer, datetimeStr) {
+            if (!datetimeStr) {
+                [yearEl, monthEl, dayEl, hourEl, minuteEl, secondEl].forEach(el => el.value = '');
+                return;
+            }
+            const d = new Date(datetimeStr);
+            if (isNaN(d)) return;
+            
+            yearEl.value = d.getFullYear();
+            monthEl.value = d.getMonth() + 1;
+            dayEl.value = d.getDate();
+            
+            let hours = d.getHours();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12 || 12;
+            
+            hourEl.value = String(hours).padStart(2, '0');
+            minuteEl.value = String(d.getMinutes()).padStart(2, '0');
+            secondEl.value = String(d.getSeconds()).padStart(2, '0');
+            
+            // تنظیم AM/PM
+            const buttons = ampmContainer.querySelectorAll('button');
+            buttons.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.value === ampm);
+            });
         }
 
         // ====== رندر اطلاعات ======
@@ -1694,6 +1859,57 @@
             loginHistoryBody.innerHTML = html;
         }
 
+        // ====== ساخت dropdown نمره سفارشی ======
+        function createScoreDropdown(taskId, initialValue) {
+            const container = document.createElement('div');
+            container.className = 'custom-score-selector';
+            container.id = `score-container-${taskId}`;
+            
+            const display = document.createElement('div');
+            display.className = 'score-display';
+            display.textContent = initialValue !== undefined ? initialValue : '۰';
+            display.dataset.value = initialValue !== undefined ? initialValue : 0;
+            
+            const dropdown = document.createElement('div');
+            dropdown.className = 'score-dropdown';
+            
+            for (let i = 0; i <= 20; i++) {
+                const option = document.createElement('div');
+                option.className = 'score-option';
+                if (i === (initialValue !== undefined ? initialValue : 0)) {
+                    option.classList.add('selected');
+                }
+                option.textContent = i;
+                option.dataset.value = i;
+                option.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const val = parseInt(this.dataset.value);
+                    display.textContent = val;
+                    display.dataset.value = val;
+                    dropdown.classList.remove('open');
+                    // به‌روزرسانی selected
+                    dropdown.querySelectorAll('.score-option').forEach(opt => {
+                        opt.classList.toggle('selected', parseInt(opt.dataset.value) === val);
+                    });
+                });
+                dropdown.appendChild(option);
+            }
+            
+            display.addEventListener('click', function(e) {
+                e.stopPropagation();
+                dropdown.classList.toggle('open');
+            });
+            
+            document.addEventListener('click', function() {
+                dropdown.classList.remove('open');
+            });
+            
+            container.appendChild(display);
+            container.appendChild(dropdown);
+            
+            return container;
+        }
+
         // ====== رندر تکالیف مدیر با بخش نظرات ======
         function renderAdminTasks() {
             if (tasks.length === 0) {
@@ -1709,7 +1925,6 @@
                 const comments = task.comments || [];
                 const commentCount = comments.length;
                 
-                // ساخت بخش نظرات
                 let commentsHtml = '';
                 if (commentCount > 0) {
                     commentsHtml = comments.map(c => `
@@ -1730,6 +1945,9 @@
                 } else {
                     commentsHtml = `<div class="no-comment">هنوز نظری ثبت نشده است.</div>`;
                 }
+
+                // فرم نظر با dropdown نمره سفارشی
+                const scoreContainerId = `score-container-${task.id}`;
 
                 html += `
                     <div class="task-item" data-id="${task.id}">
@@ -1755,11 +1973,11 @@
                                 <div id="comments-container-${task.id}">
                                     ${commentsHtml}
                                 </div>
-                                <!-- فرم افزودن نظر -->
-                                <div class="comment-form">
+                                <!-- فرم افزودن نظر با dropdown سفارشی -->
+                                <div class="comment-form" id="comment-form-${task.id}">
                                     <div class="form-group-inline">
                                         <label>نمره</label>
-                                        <input type="number" id="score-${task.id}" placeholder="۰" min="0" max="20" value="">
+                                        <div id="score-placeholder-${task.id}"></div>
                                     </div>
                                     <input type="text" id="comment-${task.id}" placeholder="متن بازخورد...">
                                     <button class="btn-comment" data-action="add-comment" data-task-id="${task.id}">
@@ -1812,6 +2030,18 @@
             });
             adminTaskList.innerHTML = html;
 
+            // ====== ایجاد dropdownهای نمره ======
+            tasks.forEach(task => {
+                const placeholder = document.getElementById(`score-placeholder-${task.id}`);
+                if (placeholder) {
+                    const existingScore = task.comments && task.comments.length > 0 
+                        ? task.comments[task.comments.length - 1].score 
+                        : 0;
+                    const dropdown = createScoreDropdown(task.id, existingScore);
+                    placeholder.appendChild(dropdown);
+                }
+            });
+
             // ====== رویدادهای دکمه‌ها ======
             adminTaskList.querySelectorAll('[data-action]').forEach(btn => {
                 btn.addEventListener('click', async function(e) {
@@ -1833,8 +2063,8 @@
                         editingId = id;
                         taskTitle.value = task.title;
                         taskDesc.value = task.desc || '';
-                        setDatetimeFields(startYear, startMonth, startDay, startHour, startMinute, startSecond, task.start);
-                        setDatetimeFields(endYear, endMonth, endDay, endHour, endMinute, endSecond, task.end);
+                        setDatetimeFieldsWithAmPm(startYear, startMonth, startDay, startHour, startMinute, startSecond, startAmPm, task.start);
+                        setDatetimeFieldsWithAmPm(endYear, endMonth, endDay, endHour, endMinute, endSecond, endAmPm, task.end);
                         taskFormContainer.classList.add('show');
                         showAddBtn.style.display = 'none';
                     } else if (action === 'hide') {
@@ -1850,13 +2080,15 @@
                         await saveTasksToCloud();
                         renderAll();
                     } else if (action === 'add-comment') {
-                        const scoreInput = document.getElementById(`score-${id}`);
+                        const scoreContainer = document.getElementById(`score-container-${id}`);
                         const commentInput = document.getElementById(`comment-${id}`);
-                        const score = parseInt(scoreInput.value);
+                        
+                        const scoreDisplay = scoreContainer?.querySelector('.score-display');
+                        const score = parseInt(scoreDisplay?.dataset?.value || 0);
                         const text = commentInput.value.trim();
                         
                         if (isNaN(score) || score < 0 || score > 20) {
-                            alert('لطفاً نمره را بین ۰ تا ۲۰ وارد کنید.');
+                            alert('لطفاً نمره را بین ۰ تا ۲۰ انتخاب کنید.');
                             return;
                         }
                         if (!text) {
@@ -1872,7 +2104,6 @@
                             timestamp: new Date().toISOString()
                         });
                         
-                        scoreInput.value = '';
                         commentInput.value = '';
                         await saveTasksToCloud();
                         renderAll();
@@ -2008,7 +2239,6 @@
                 // ====== بخش نمره و بازخورد (فقط اگر نظر وجود داشته باشد) ======
                 let commentHtml = '';
                 if (task.comments && task.comments.length > 0) {
-                    // فقط آخرین نظر را نمایش بده
                     const lastComment = task.comments[task.comments.length - 1];
                     commentHtml = `
                         <div class="student-comment-section visible">
@@ -2129,6 +2359,13 @@
             taskDesc.value = '';
             [startYear, startMonth, startDay, startHour, startMinute, startSecond,
              endYear, endMonth, endDay, endHour, endMinute, endSecond].forEach(el => el.value = '');
+            // تنظیم مجدد AM/PM به AM
+            [startAmPm, endAmPm].forEach(container => {
+                const buttons = container.querySelectorAll('button');
+                buttons.forEach((btn, idx) => {
+                    btn.classList.toggle('active', idx === 0);
+                });
+            });
             editingId = null;
             taskFormContainer.classList.remove('show');
             showAddBtn.style.display = 'inline-flex';
@@ -2145,8 +2382,8 @@
                 return;
             }
 
-            const startDatetime = getDatetimeFromFields(startYear, startMonth, startDay, startHour, startMinute, startSecond);
-            const endDatetime = getDatetimeFromFields(endYear, endMonth, endDay, endHour, endMinute, endSecond);
+            const startDatetime = getDatetimeFromFieldsWithAmPm(startYear, startMonth, startDay, startHour, startMinute, startSecond, startAmPm);
+            const endDatetime = getDatetimeFromFieldsWithAmPm(endYear, endMonth, endDay, endHour, endMinute, endSecond, endAmPm);
 
             if (!startDatetime) {
                 alert('لطفاً تاریخ و ساعت شروع را به صورت کامل و معتبر وارد کنید.');
