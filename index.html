@@ -878,6 +878,72 @@
             font-size: 0.9rem;
         }
 
+        /* ===== بخش تاریخچه ورود ===== */
+        .login-history-section {
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid #e2e8f0;
+        }
+
+        .login-history-section .section-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .login-history-section .section-title svg {
+            width: 22px;
+            height: 22px;
+            color: #6366f1;
+        }
+
+        .login-history-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+
+        .login-history-table th {
+            background: #eef2ff;
+            color: #4338ca;
+            padding: 0.6rem 0.8rem;
+            text-align: right;
+            font-weight: 700;
+            border-bottom: 2px solid #c7d2fe;
+        }
+
+        .login-history-table td {
+            padding: 0.5rem 0.8rem;
+            border-bottom: 1px solid #eef2f6;
+            color: #1e293b;
+        }
+
+        .login-history-table tr:hover td {
+            background: #f8fafc;
+        }
+
+        .login-history-table .empty-row td {
+            text-align: center;
+            color: #94a3b8;
+            padding: 1.5rem 0;
+        }
+
+        .device-badge {
+            display: inline-block;
+            background: #eef2ff;
+            color: #4338ca;
+            padding: 0.1rem 0.6rem;
+            border-radius: 30px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
         @media (max-width: 768px) {
             .container { padding: 1.5rem; }
             .form-grid { grid-template-columns: 1fr; }
@@ -889,6 +955,9 @@
             .student-task-extra { min-width: 100px; }
             .login-info-box { padding: 1rem; }
             .login-info-grid { grid-template-columns: 1fr 1fr; }
+            .login-history-table { font-size: 0.75rem; }
+            .login-history-table th,
+            .login-history-table td { padding: 0.4rem 0.5rem; }
         }
 
         @media (max-width: 480px) {
@@ -898,6 +967,9 @@
             .timer-container { min-width: 80px; }
             .timer-display { font-size: 0.9rem; min-width: 70px; }
             .login-info-grid { grid-template-columns: 1fr; }
+            .login-history-table { font-size: 0.7rem; }
+            .login-history-table th,
+            .login-history-table td { padding: 0.3rem 0.4rem; }
         }
     </style>
 </head>
@@ -953,7 +1025,7 @@
             <span id="syncText">همگام‌سازی شده</span>
         </div>
 
-        <!-- ===== بخش اطلاعات ورود هنرجو ===== -->
+        <!-- ===== بخش اطلاعات آخرین ورود هنرجو ===== -->
         <div class="login-info-section" id="loginInfoSection">
             <div class="section-title">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -963,7 +1035,34 @@
                 <span style="font-size:0.7rem; font-weight:400; color:#94a3b8; margin-right:auto;" id="loginTimeStamp"></span>
             </div>
             <div id="loginInfoContent">
-                <div class="no-login-data">در حال دریافت اطلاعات...</div>
+                <div class="no-login-data">هنرجویی تاکنون وارد نشده است.</div>
+            </div>
+        </div>
+
+        <!-- ===== بخش تاریخچه ورود (۳۰ روز اخیر) ===== -->
+        <div class="login-history-section" id="loginHistorySection">
+            <div class="section-title">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                تاریخچه ورود (۳۰ روز اخیر)
+            </div>
+            <div id="loginHistoryContent">
+                <table class="login-history-table">
+                    <thead>
+                        <tr>
+                            <th>تاریخ و زمان</th>
+                            <th>آیپی</th>
+                            <th>دستگاه</th>
+                            <th>مرورگر</th>
+                        </tr>
+                    </thead>
+                    <tbody id="loginHistoryBody">
+                        <tr class="empty-row">
+                            <td colspan="4">هیچ ورودی ثبت نشده است.</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
 
@@ -1075,6 +1174,7 @@
         let currentUser = null;
         let timerIntervals = {};
         let studentLoginInfo = null;
+        let loginHistory = [];
 
         // عناصر DOM
         const loginPage = document.getElementById('loginPage');
@@ -1104,6 +1204,7 @@
 
         const loginInfoContent = document.getElementById('loginInfoContent');
         const loginTimeStamp = document.getElementById('loginTimeStamp');
+        const loginHistoryBody = document.getElementById('loginHistoryBody');
 
         const startYear = document.getElementById('startYear');
         const startMonth = document.getElementById('startMonth');
@@ -1170,7 +1271,10 @@
 
                 // بارگذاری اطلاعات ورود هنرجو
                 studentLoginInfo = data.record?.studentLoginInfo || null;
+                loginHistory = data.record?.loginHistory || [];
+                
                 renderLoginInfo();
+                renderLoginHistory();
 
                 setSyncStatus('success');
                 return true;
@@ -1186,10 +1290,11 @@
             try {
                 showLoading(true);
                 setSyncStatus('loading');
-                const payload = { tasks: tasks };
-                if (studentLoginInfo) {
-                    payload.studentLoginInfo = studentLoginInfo;
-                }
+                const payload = { 
+                    tasks: tasks,
+                    studentLoginInfo: studentLoginInfo,
+                    loginHistory: loginHistory
+                };
                 const response = await fetch(API_BASE_URL, {
                     method: 'PUT',
                     headers: headers,
@@ -1225,24 +1330,22 @@
             let browser = 'ناشناس';
             let os = 'ناشناس';
             
-            if (ua.indexOf('Chrome') > -1 && ua.indexOf('Edg') === -1) browser = 'Chrome';
+            if (ua.indexOf('Chrome') > -1 && ua.indexOf('Edg') === -1 && ua.indexOf('OPR') === -1) browser = 'Chrome';
             else if (ua.indexOf('Firefox') > -1) browser = 'Firefox';
-            else if (ua.indexOf('Safari') > -1 && ua.indexOf('Chrome') === -1) browser = 'Safari';
+            else if (ua.indexOf('Safari') > -1 && ua.indexOf('Chrome') === -1 && ua.indexOf('Edg') === -1) browser = 'Safari';
             else if (ua.indexOf('Edg') > -1) browser = 'Edge';
             else if (ua.indexOf('OPR') > -1 || ua.indexOf('Opera') > -1) browser = 'Opera';
+            else if (ua.indexOf('Brave') > -1) browser = 'Brave';
             
             if (ua.indexOf('Windows') > -1) os = 'Windows';
-            else if (ua.indexOf('Mac') > -1) os = 'MacOS';
-            else if (ua.indexOf('Linux') > -1) os = 'Linux';
+            else if (ua.indexOf('Mac OS X') > -1 || ua.indexOf('Macintosh') > -1) os = 'MacOS';
+            else if (ua.indexOf('Linux') > -1 && ua.indexOf('Android') === -1) os = 'Linux';
             else if (ua.indexOf('Android') > -1) os = 'Android';
             else if (ua.indexOf('iOS') > -1 || ua.indexOf('iPhone') > -1 || ua.indexOf('iPad') > -1) os = 'iOS';
             
             return {
                 browser: browser,
-                os: os,
-                language: navigator.language || 'fa-IR',
-                screen: `${window.screen.width}x${window.screen.height}`,
-                userAgent: ua
+                os: os
             };
         }
 
@@ -1252,37 +1355,17 @@
                 if (!response.ok) throw new Error('خطا در دریافت اطلاعات آیپی');
                 const data = await response.json();
                 return {
-                    ip: data.ip || 'نامشخص',
-                    city: data.city || 'نامشخص',
-                    region: data.region || 'نامشخص',
-                    region_code: data.region_code || '',
-                    country: data.country_name || 'نامشخص',
-                    country_code: data.country || '',
-                    latitude: data.latitude || null,
-                    longitude: data.longitude || null,
-                    timezone: data.timezone || 'نامشخص',
-                    org: data.org || 'نامشخص',
-                    asn: data.asn || 'نامشخص'
+                    ip: data.ip || 'نامشخص'
                 };
             } catch (error) {
                 console.error('خطا در دریافت اطلاعات آیپی:', error);
                 return {
-                    ip: 'نامشخص',
-                    city: 'نامشخص',
-                    region: 'نامشخص',
-                    region_code: '',
-                    country: 'نامشخص',
-                    country_code: '',
-                    latitude: null,
-                    longitude: null,
-                    timezone: 'نامشخص',
-                    org: 'نامشخص',
-                    asn: 'نامشخص'
+                    ip: 'نامشخص'
                 };
             }
         }
 
-        // ====== رندر اطلاعات ورود هنرجو ======
+        // ====== رندر اطلاعات آخرین ورود ======
         function renderLoginInfo() {
             if (!studentLoginInfo) {
                 loginInfoContent.innerHTML = `<div class="no-login-data">هنرجویی تاکنون وارد نشده است.</div>`;
@@ -1306,7 +1389,7 @@
             let html = `
                 <div class="login-info-grid">
                     <div class="login-info-item">
-                        <span class="label">زمان ورود (ثانیه - دقیقه - ساعت - روز - سال)</span>
+                        <span class="label">تاریخ و زمان ورود</span>
                         <span class="value fa">${persianDate}</span>
                     </div>
                     <div class="login-info-item">
@@ -1314,48 +1397,69 @@
                         <span class="value">${info.ip || 'نامشخص'}</span>
                     </div>
                     <div class="login-info-item">
-                        <span class="label">کشور</span>
-                        <span class="value fa">${info.country || 'نامشخص'}</span>
-                    </div>
-                    <div class="login-info-item">
-                        <span class="label">شهر</span>
-                        <span class="value fa">${info.city || 'نامشخص'}</span>
-                    </div>
-                    <div class="login-info-item">
-                        <span class="label">منطقه</span>
-                        <span class="value fa">${info.region || 'نامشخص'}</span>
-                    </div>
-                    <div class="login-info-item">
-                        <span class="label">موقعیت مکانی</span>
-                        <span class="value">${info.latitude && info.longitude ? `${info.latitude} , ${info.longitude}` : 'نامشخص'}</span>
-                    </div>
-                    <div class="login-info-item">
-                        <span class="label">منطقه زمانی</span>
-                        <span class="value">${info.timezone || 'نامشخص'}</span>
-                    </div>
-                    <div class="login-info-item">
-                        <span class="label">سازمان / ارائه‌دهنده</span>
-                        <span class="value">${info.org || 'نامشخص'}</span>
+                        <span class="label">دستگاه (سیستم‌عامل)</span>
+                        <span class="value fa">${info.os || 'نامشخص'}</span>
                     </div>
                     <div class="login-info-item">
                         <span class="label">مرورگر</span>
                         <span class="value fa">${info.browser || 'نامشخص'}</span>
                     </div>
-                    <div class="login-info-item">
-                        <span class="label">سیستم‌عامل</span>
-                        <span class="value fa">${info.os || 'نامشخص'}</span>
-                    </div>
-                    <div class="login-info-item">
-                        <span class="label">زبان</span>
-                        <span class="value">${info.language || 'نامشخص'}</span>
-                    </div>
-                    <div class="login-info-item">
-                        <span class="label">دستگاه (صفحه نمایش)</span>
-                        <span class="value">${info.screen || 'نامشخص'}</span>
-                    </div>
                 </div>
             `;
             loginInfoContent.innerHTML = html;
+        }
+
+        // ====== رندر تاریخچه ورود ======
+        function renderLoginHistory() {
+            if (!loginHistory || loginHistory.length === 0) {
+                loginHistoryBody.innerHTML = `
+                    <tr class="empty-row">
+                        <td colspan="4">هیچ ورودی ثبت نشده است.</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            // فیلتر ۳۰ روز اخیر
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            
+            const filtered = loginHistory
+                .filter(item => new Date(item.timestamp) >= thirtyDaysAgo)
+                .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            if (filtered.length === 0) {
+                loginHistoryBody.innerHTML = `
+                    <tr class="empty-row">
+                        <td colspan="4">هیچ ورودی در ۳۰ روز اخیر ثبت نشده است.</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            let html = '';
+            filtered.forEach(item => {
+                const date = new Date(item.timestamp);
+                const persianDate = new Intl.DateTimeFormat('fa-IR', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit'
+                }).format(date);
+
+                html += `
+                    <tr>
+                        <td>${persianDate}</td>
+                        <td>${item.ip || 'نامشخص'}</td>
+                        <td><span class="device-badge">${item.os || 'نامشخص'}</span></td>
+                        <td><span class="device-badge">${item.browser || 'نامشخص'}</span></td>
+                    </tr>
+                `;
+            });
+
+            loginHistoryBody.innerHTML = html;
         }
 
         // ====== توابع تاریخ ======
@@ -1623,6 +1727,7 @@
             if (currentUser === 'admin') {
                 renderAdminTasks();
                 renderLoginInfo();
+                renderLoginHistory();
             } else if (currentUser === 'student') {
                 renderStudentTasks();
             }
@@ -1747,8 +1852,8 @@
                 adminPanel.style.display = 'block';
                 renderAdminTasks();
                 renderLoginInfo();
+                renderLoginHistory();
             } else if (role === 'student') {
-                // ثبت اطلاعات ورود هنرجو
                 await recordStudentLogin();
                 studentPanel.style.display = 'block';
                 renderStudentTasks();
@@ -1760,14 +1865,28 @@
                 const deviceInfo = getDeviceInfo();
                 const ipInfo = await getIpInfo();
                 
-                studentLoginInfo = {
+                const loginData = {
                     timestamp: new Date().toISOString(),
-                    ...deviceInfo,
-                    ...ipInfo
+                    ip: ipInfo.ip,
+                    os: deviceInfo.os,
+                    browser: deviceInfo.browser
                 };
+                
+                // به‌روزرسانی آخرین ورود
+                studentLoginInfo = loginData;
+                
+                // اضافه کردن به تاریخچه
+                if (!loginHistory) loginHistory = [];
+                loginHistory.push(loginData);
+                
+                // نگهداری فقط ۱۰۰ رکورد آخر
+                if (loginHistory.length > 100) {
+                    loginHistory = loginHistory.slice(-100);
+                }
                 
                 await saveTasksToCloud();
                 renderLoginInfo();
+                renderLoginHistory();
             } catch (error) {
                 console.error('خطا در ثبت اطلاعات ورود:', error);
             }
