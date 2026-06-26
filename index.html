@@ -68,6 +68,36 @@
             font-weight: 400;
         }
 
+        /* باکس گرادینت رنگی */
+        .login-info-box {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6, #a78bfa);
+            border-radius: 16px;
+            padding: 1.2rem 1.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            color: white;
+            box-shadow: 0 4px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .login-info-box .info-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .login-info-box .info-desc {
+            font-size: 0.85rem;
+            opacity: 0.95;
+            line-height: 1.6;
+        }
+
+        .login-info-box .info-desc span {
+            font-weight: 700;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0.1rem 0.6rem;
+            border-radius: 30px;
+        }
+
         .login-input-group {
             margin-bottom: 1.2rem;
         }
@@ -616,7 +646,7 @@
             background: #4f46e5 !important;
         }
 
-        /* ===== استایل‌های جدید پنل هنرجو ===== */
+        /* ===== استایل‌های پنل هنرجو ===== */
         .student-task-wrapper {
             background: white;
             border-radius: 20px;
@@ -724,6 +754,7 @@
             .datetime-group input[type="number"] { min-width: 45px; max-width: 65px; }
             .student-task-wrapper { flex-direction: column; }
             .student-task-extra { min-width: 100px; }
+            .login-info-box { padding: 1rem; }
         }
 
         @media (max-width: 480px) {
@@ -741,7 +772,17 @@
     <!-- لاگین -->
     <div id="loginPage">
         <h2>سامانه تکالیف</h2>
-        <p class="subtitle">تکالیف کلاس</p>
+        <p class="subtitle">مدیریت و پیگیری تکالیف هنرجو</p>
+
+        <!-- باکس گرادینت رنگی -->
+        <div class="login-info-box">
+            <div class="info-title">هنرجو</div>
+            <div class="info-desc">
+                برای ورود به عنوان <span>هنرجو</span>، کافیست روی دکمه ورود کلیک کنید<br>
+                <span style="font-size:0.75rem; opacity:0.8;">(بدون وارد کردن هیچگونه نام کاربری یا رمز عبور)</span>
+            </div>
+        </div>
+
         <form id="loginForm" autocomplete="on">
             <div class="login-input-group">
                 <label>نام کاربری</label>
@@ -843,7 +884,7 @@
         <div class="panel-header">
             <h1>تکالیف من</h1>
             <div class="header-actions">
-                <span class="user-badge">>فرشته ترخانی</span>
+                <span class="user-badge">هنرجو: فرشته ترخانی</span>
                 <button class="logout-btn" id="studentLogout">خروج</button>
             </div>
         </div>
