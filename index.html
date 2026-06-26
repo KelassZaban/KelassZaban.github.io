@@ -360,7 +360,6 @@
             min-height: 70px;
         }
 
-        /* ===== بخش زمان با AM/PM ===== */
         .datetime-section {
             background: white;
             border-radius: 16px;
@@ -425,7 +424,6 @@
             padding: 0 0.1rem;
         }
 
-        /* ===== انتخابگر AM/PM ===== */
         .ampm-selector {
             display: inline-flex;
             border: 2px solid #e2e8f0;
@@ -455,7 +453,6 @@
             background: #eef2ff;
         }
 
-        /* ===== بخش نمره سفارشی ===== */
         .custom-score-selector {
             position: relative;
             display: inline-block;
@@ -695,7 +692,6 @@
             font-size: 1rem;
         }
 
-        /* ===== بخش نظرات ===== */
         .comments-section {
             margin-top: 0.8rem;
             padding-top: 0.8rem;
@@ -775,7 +771,6 @@
             background: #fee2e2;
         }
 
-        /* ===== فرم نظر جدید ===== */
         .comment-form {
             display: flex;
             flex-wrap: wrap;
@@ -848,7 +843,6 @@
             padding: 0.3rem 0;
         }
 
-        /* ===== بخش نمره هنرجو ===== */
         .student-comment-section {
             margin-top: 0.5rem;
             padding: 0.6rem 0.9rem;
@@ -895,7 +889,6 @@
             margin-top: 0.1rem;
         }
 
-        /* ===== تایمر ===== */
         .timer-container {
             display: flex;
             flex-direction: column;
@@ -1109,7 +1102,6 @@
             color: #64748b;
         }
 
-        /* ===== بخش اطلاعات ورود ===== */
         .login-info-section {
             background: #f8fafc;
             border-radius: 20px;
@@ -1329,7 +1321,6 @@
             <span id="syncText">همگام‌سازی شده</span>
         </div>
 
-        <!-- ===== بخش اطلاعات آخرین ورود هنرجو ===== -->
         <div class="login-info-section" id="loginInfoSection">
             <div class="section-title">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -1343,7 +1334,6 @@
             </div>
         </div>
 
-        <!-- ===== بخش تاریخچه ورود (۳۰ روز اخیر) ===== -->
         <div class="login-history-section" id="loginHistorySection">
             <div class="section-title">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
@@ -1747,7 +1737,6 @@
             if (d < 1 || d > 31) return null;
             if (h < 1 || h > 12) return null;
             
-            // تبدیل به ۲۴ ساعته
             if (ampm === 'PM' && h !== 12) h += 12;
             if (ampm === 'AM' && h === 12) h = 0;
             
@@ -1776,7 +1765,6 @@
             minuteEl.value = String(d.getMinutes()).padStart(2, '0');
             secondEl.value = String(d.getSeconds()).padStart(2, '0');
             
-            // تنظیم AM/PM
             const buttons = ampmContainer.querySelectorAll('button');
             buttons.forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.value === ampm);
@@ -1859,7 +1847,7 @@
             loginHistoryBody.innerHTML = html;
         }
 
-        // ====== ساخت dropdown نمره سفارشی ======
+        // ====== ساخت dropdown نمره ======
         function createScoreDropdown(taskId, initialValue) {
             const container = document.createElement('div');
             container.className = 'custom-score-selector';
@@ -1887,7 +1875,6 @@
                     display.textContent = val;
                     display.dataset.value = val;
                     dropdown.classList.remove('open');
-                    // به‌روزرسانی selected
                     dropdown.querySelectorAll('.score-option').forEach(opt => {
                         opt.classList.toggle('selected', parseInt(opt.dataset.value) === val);
                     });
@@ -1910,7 +1897,7 @@
             return container;
         }
 
-        // ====== رندر تکالیف مدیر با بخش نظرات ======
+        // ====== رندر تکالیف مدیر ======
         function renderAdminTasks() {
             if (tasks.length === 0) {
                 adminTaskList.innerHTML = `<div class="no-task">هیچ تکلیفی ثبت نشده است.</div>`;
@@ -1946,9 +1933,6 @@
                     commentsHtml = `<div class="no-comment">هنوز نظری ثبت نشده است.</div>`;
                 }
 
-                // فرم نظر با dropdown نمره سفارشی
-                const scoreContainerId = `score-container-${task.id}`;
-
                 html += `
                     <div class="task-item" data-id="${task.id}">
                         <div class="task-info">
@@ -1961,7 +1945,6 @@
                                 ${hiddenBadge}
                             </div>
                             
-                            <!-- بخش نظرات -->
                             <div class="comments-section">
                                 <div class="comments-title">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1973,7 +1956,6 @@
                                 <div id="comments-container-${task.id}">
                                     ${commentsHtml}
                                 </div>
-                                <!-- فرم افزودن نظر با dropdown سفارشی -->
                                 <div class="comment-form" id="comment-form-${task.id}">
                                     <div class="form-group-inline">
                                         <label>نمره</label>
@@ -2042,88 +2024,98 @@
                 }
             });
 
-            // ====== رویدادهای دکمه‌ها ======
-            adminTaskList.querySelectorAll('[data-action]').forEach(btn => {
-                btn.addEventListener('click', async function(e) {
-                    e.stopPropagation();
-                    const action = this.dataset.action;
-                    const id = parseInt(this.dataset.id);
-                    const task = tasks.find(t => t.id === id);
-                    if (!task) return;
+            // ====== رویدادها - با استفاده از event delegation ======
+            adminTaskList.addEventListener('click', async function(e) {
+                const target = e.target.closest('[data-action]');
+                if (!target) return;
+                
+                const action = target.dataset.action;
+                const id = parseInt(target.dataset.taskId || target.dataset.id);
+                const task = tasks.find(t => t.id === id);
+                if (!task) return;
 
-                    if (action === 'delete') {
-                        if (confirm('آیا از حذف این تکلیف اطمینان دارید؟')) {
-                            tasks = tasks.filter(t => t.id !== id);
-                            if (editingId === id) cancelEdit();
-                            stopTimer(id);
-                            await saveTasksToCloud();
-                            renderAll();
-                        }
-                    } else if (action === 'edit') {
-                        editingId = id;
-                        taskTitle.value = task.title;
-                        taskDesc.value = task.desc || '';
-                        setDatetimeFieldsWithAmPm(startYear, startMonth, startDay, startHour, startMinute, startSecond, startAmPm, task.start);
-                        setDatetimeFieldsWithAmPm(endYear, endMonth, endDay, endHour, endMinute, endSecond, endAmPm, task.end);
-                        taskFormContainer.classList.add('show');
-                        showAddBtn.style.display = 'none';
-                    } else if (action === 'hide') {
-                        task.hiddenForStudent = true;
-                        await saveTasksToCloud();
-                        renderAll();
-                    } else if (action === 'show') {
-                        task.hiddenForStudent = false;
-                        await saveTasksToCloud();
-                        renderAll();
-                    } else if (action === 'toggle-complete') {
-                        task.completedByStudent = !task.completedByStudent;
-                        await saveTasksToCloud();
-                        renderAll();
-                    } else if (action === 'add-comment') {
-                        const scoreContainer = document.getElementById(`score-container-${id}`);
-                        const commentInput = document.getElementById(`comment-${id}`);
-                        
-                        const scoreDisplay = scoreContainer?.querySelector('.score-display');
-                        const score = parseInt(scoreDisplay?.dataset?.value || 0);
-                        const text = commentInput.value.trim();
-                        
-                        if (isNaN(score) || score < 0 || score > 20) {
-                            alert('لطفاً نمره را بین ۰ تا ۲۰ انتخاب کنید.');
-                            return;
-                        }
-                        if (!text) {
-                            alert('لطفاً متن بازخورد را وارد کنید.');
-                            return;
-                        }
-                        
-                        if (!task.comments) task.comments = [];
-                        task.comments.push({
-                            id: Date.now(),
-                            score: score,
-                            text: text,
-                            timestamp: new Date().toISOString()
-                        });
-                        
-                        commentInput.value = '';
-                        await saveTasksToCloud();
-                        renderAll();
-                    } else if (action === 'delete-comment') {
-                        const taskId = parseInt(this.dataset.taskId);
-                        const commentId = parseInt(this.dataset.commentId);
-                        const targetTask = tasks.find(t => t.id === taskId);
-                        if (!targetTask) return;
-                        
-                        if (confirm('آیا از حذف این نظر اطمینان دارید؟')) {
-                            targetTask.comments = targetTask.comments.filter(c => c.id !== commentId);
-                            await saveTasksToCloud();
-                            renderAll();
-                        }
+                // ====== افزودن نظر ======
+                if (action === 'add-comment') {
+                    e.preventDefault();
+                    const scoreContainer = document.getElementById(`score-container-${id}`);
+                    const commentInput = document.getElementById(`comment-${id}`);
+                    
+                    const scoreDisplay = scoreContainer?.querySelector('.score-display');
+                    const score = parseInt(scoreDisplay?.dataset?.value || 0);
+                    const text = commentInput?.value?.trim();
+                    
+                    if (isNaN(score) || score < 0 || score > 20) {
+                        alert('لطفاً نمره را بین ۰ تا ۲۰ انتخاب کنید.');
+                        return;
                     }
-                });
+                    if (!text) {
+                        alert('لطفاً متن بازخورد را وارد کنید.');
+                        return;
+                    }
+                    
+                    if (!task.comments) task.comments = [];
+                    task.comments.push({
+                        id: Date.now(),
+                        score: score,
+                        text: text,
+                        timestamp: new Date().toISOString()
+                    });
+                    
+                    if (commentInput) commentInput.value = '';
+                    await saveTasksToCloud();
+                    renderAll();
+                    return;
+                }
+
+                // ====== حذف نظر ======
+                if (action === 'delete-comment') {
+                    const taskId = parseInt(target.dataset.taskId);
+                    const commentId = parseInt(target.dataset.commentId);
+                    const targetTask = tasks.find(t => t.id === taskId);
+                    if (!targetTask) return;
+                    
+                    if (confirm('آیا از حذف این نظر اطمینان دارید؟')) {
+                        targetTask.comments = targetTask.comments.filter(c => c.id !== commentId);
+                        await saveTasksToCloud();
+                        renderAll();
+                    }
+                    return;
+                }
+
+                // ====== عملیات‌های دیگر ======
+                if (action === 'delete') {
+                    if (confirm('آیا از حذف این تکلیف اطمینان دارید؟')) {
+                        tasks = tasks.filter(t => t.id !== id);
+                        if (editingId === id) cancelEdit();
+                        stopTimer(id);
+                        await saveTasksToCloud();
+                        renderAll();
+                    }
+                } else if (action === 'edit') {
+                    editingId = id;
+                    taskTitle.value = task.title;
+                    taskDesc.value = task.desc || '';
+                    setDatetimeFieldsWithAmPm(startYear, startMonth, startDay, startHour, startMinute, startSecond, startAmPm, task.start);
+                    setDatetimeFieldsWithAmPm(endYear, endMonth, endDay, endHour, endMinute, endSecond, endAmPm, task.end);
+                    taskFormContainer.classList.add('show');
+                    showAddBtn.style.display = 'none';
+                } else if (action === 'hide') {
+                    task.hiddenForStudent = true;
+                    await saveTasksToCloud();
+                    renderAll();
+                } else if (action === 'show') {
+                    task.hiddenForStudent = false;
+                    await saveTasksToCloud();
+                    renderAll();
+                } else if (action === 'toggle-complete') {
+                    task.completedByStudent = !task.completedByStudent;
+                    await saveTasksToCloud();
+                    renderAll();
+                }
             });
         }
 
-        // ====== توابع تاریخ (ادامه) ======
+        // ====== توابع تاریخ ======
         function getDatetimeFromFields(yearEl, monthEl, dayEl, hourEl, minuteEl, secondEl) {
             const y = parseInt(yearEl.value);
             const m = parseInt(monthEl.value);
@@ -2236,7 +2228,6 @@
                     completeBtnHtml = `<button class="btn-complete" data-action="complete-task" data-id="${task.id}">تکلیف را تمام کرده ام!</button>`;
                 }
 
-                // ====== بخش نمره و بازخورد (فقط اگر نظر وجود داشته باشد) ======
                 let commentHtml = '';
                 if (task.comments && task.comments.length > 0) {
                     const lastComment = task.comments[task.comments.length - 1];
@@ -2359,7 +2350,6 @@
             taskDesc.value = '';
             [startYear, startMonth, startDay, startHour, startMinute, startSecond,
              endYear, endMonth, endDay, endHour, endMinute, endSecond].forEach(el => el.value = '');
-            // تنظیم مجدد AM/PM به AM
             [startAmPm, endAmPm].forEach(container => {
                 const buttons = container.querySelectorAll('button');
                 buttons.forEach((btn, idx) => {
