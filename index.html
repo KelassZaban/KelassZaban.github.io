@@ -972,16 +972,17 @@
 <script>
     (function() {
         // ============================================================
-        //  تنظیمات JSONBin.io - این دو خط را با اطلاعات خود جایگزین کنید
+        //  تنظیمات JSONBin.io
         // ============================================================
-        const JSONBIN_API_KEY = '$2a$10$mjpWE.t7rCAM2nfnOAdiZOkULd/qUuVL6AVauwTJb6M4bNYGEafIu';
+        const JSONBIN_ACCESS_KEY_ID = '6a3e5865da38895dfe0220cd';
+        const JSONBIN_ACCESS_KEY = '$2a$10$mjpWE.t7rCAM2nfnOAdiZOkULd/qUuVL6AVauwTJb6M4bNYGEafIu';
         const JSONBIN_BIN_ID = '6a3e58bada38895dfe022245';
         // ============================================================
 
         const API_BASE_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
         const headers = {
             'Content-Type': 'application/json',
-            'X-Master-Key': JSONBIN_API_KEY
+            'X-Access-Key': JSONBIN_ACCESS_KEY
         };
 
         let tasks = [];
@@ -1057,19 +1058,23 @@
             try {
                 setSyncStatus('loading');
                 const response = await fetch(API_BASE_URL, { headers });
+                
+                if (response.status === 404) {
+                    // Bin وجود ندارد یا شناسه اشتباه است
+                    alert('خطا: Bin یافت نشد. لطفاً Bin ID را بررسی کنید.');
+                    setSyncStatus('error');
+                    return false;
+                }
+                
                 if (!response.ok) {
-                    if (response.status === 404) {
-                        // Bin وجود ندارد، ایجاد می‌کنیم
-                        await createBin();
-                        return await loadTasksFromCloud();
-                    }
                     throw new Error(`HTTP ${response.status}`);
                 }
+                
                 const data = await response.json();
                 const loadedTasks = data.record?.tasks || [];
+                
                 if (loadedTasks.length > 0) {
                     tasks = loadedTasks;
-                    // پیدا کردن بزرگترین id
                     const maxId = tasks.reduce((max, t) => Math.max(max, t.id || 0), 0);
                     nextId = maxId + 1;
                 } else {
@@ -1081,29 +1086,8 @@
             } catch (error) {
                 console.error('خطا در دریافت داده‌ها:', error);
                 setSyncStatus('error');
+                alert('خطا در ارتباط با سرور: ' + error.message);
                 return false;
-            }
-        }
-
-        async function createBin() {
-            try {
-                const createResponse = await fetch('https://api.jsonbin.io/v3/b', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Master-Key': JSONBIN_API_KEY
-                    },
-                    body: JSON.stringify({ tasks: [] })
-                });
-                if (!createResponse.ok) throw new Error('خطا در ایجاد Bin');
-                const data = await createResponse.json();
-                // ذخیره Bin ID جدید در متغیر (برای استفاده فعلی)
-                // اما کاربر باید Bin ID جدید را در کد جایگذاری کند
-                alert('Bin جدید ساخته شد! لطفاً Bin ID جدید را در کد جایگذاری کنید:\n' + data.id);
-                return data;
-            } catch (error) {
-                console.error('خطا در ایجاد Bin:', error);
-                throw error;
             }
         }
 
@@ -1116,13 +1100,18 @@
                     headers: headers,
                     body: JSON.stringify({ tasks: tasks })
                 });
+                
+                if (response.status === 404) {
+                    alert('خطا: Bin یافت نشد. لطفاً Bin ID را بررسی کنید.');
+                    setSyncStatus('error');
+                    showLoading(false);
+                    return false;
+                }
+                
                 if (!response.ok) {
-                    if (response.status === 404) {
-                        await createBin();
-                        return await saveTasksToCloud();
-                    }
                     throw new Error(`HTTP ${response.status}`);
                 }
+                
                 setSyncStatus('success');
                 showLoading(false);
                 return true;
@@ -1510,13 +1499,11 @@
                 delete timerIntervals[key];
             });
 
-            // بارگذاری داده‌ها از سرور
             showLoading(true);
             const success = await loadTasksFromCloud();
             showLoading(false);
 
             if (!success) {
-                alert('خطا در ارتباط با سرور. لطفاً دوباره تلاش کنید.');
                 logout();
                 return;
             }
