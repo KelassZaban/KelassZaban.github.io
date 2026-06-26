@@ -41,6 +41,53 @@
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .loading-box {
+            background: white;
+            padding: 2rem 3rem;
+            border-radius: 24px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid #6366f1;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-box p {
+            color: #1e293b;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
         #loginPage {
             max-width: 420px;
             margin: 0 auto;
@@ -68,7 +115,6 @@
             font-weight: 400;
         }
 
-        /* باکس گرادینت رنگی */
         .login-info-box {
             background: linear-gradient(135deg, #6366f1, #8b5cf6, #a78bfa);
             border-radius: 16px;
@@ -235,6 +281,26 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(99, 102, 241, 0.35);
         }
+
+        .sync-status {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sync-status .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .sync-status .dot.green { background: #22c55e; }
+        .sync-status .dot.yellow { background: #eab308; animation: blink 0.8s ease-in-out infinite; }
+        .sync-status .dot.red { background: #ef4444; }
 
         .task-form {
             background: #f8fafc;
@@ -530,7 +596,6 @@
             font-size: 1rem;
         }
 
-        /* ===== استایل‌های تایمر ===== */
         .timer-container {
             display: flex;
             flex-direction: column;
@@ -646,7 +711,6 @@
             background: #4f46e5 !important;
         }
 
-        /* ===== استایل‌های پنل هنرجو ===== */
         .student-task-wrapper {
             background: white;
             border-radius: 20px;
@@ -767,6 +831,14 @@
     </style>
 </head>
 <body>
+
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-box">
+        <div class="loading-spinner"></div>
+        <p>در حال همگام‌سازی با سرور...</p>
+    </div>
+</div>
+
 <div class="container" id="appContainer">
 
     <!-- لاگین -->
@@ -774,7 +846,6 @@
         <h2>سامانه تکالیف</h2>
         <p class="subtitle">مدیریت و پیگیری تکالیف هنرجو</p>
 
-        <!-- باکس گرادینت رنگی -->
         <div class="login-info-box">
             <div class="info-title">هنرجو</div>
             <div class="info-desc">
@@ -804,6 +875,11 @@
                 <span class="user-badge">مدیر: امیررضا مومنی</span>
                 <button class="logout-btn" id="adminLogout">خروج</button>
             </div>
+        </div>
+
+        <div class="sync-status">
+            <span class="dot green" id="syncDot"></span>
+            <span id="syncText">همگام‌سازی شده</span>
         </div>
 
         <button class="add-task-btn" id="showAddTaskForm">
@@ -895,15 +971,31 @@
 
 <script>
     (function() {
+        // ============================================================
+        //  تنظیمات JSONBin.io - این دو خط را با اطلاعات خود جایگزین کنید
+        // ============================================================
+        const JSONBIN_API_KEY = '$2a$10$mjpWE.t7rCAM2nfnOAdiZOkULd/qUuVL6AVauwTJb6M4bNYGEafIu';
+        const JSONBIN_BIN_ID = '6a3e58bada38895dfe022245';
+        // ============================================================
+
+        const API_BASE_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
+        const headers = {
+            'Content-Type': 'application/json',
+            'X-Master-Key': JSONBIN_API_KEY
+        };
+
         let tasks = [];
         let nextId = 1;
         let editingId = null;
         let currentUser = null;
         let timerIntervals = {};
+        let isSyncing = false;
 
+        // عناصر DOM
         const loginPage = document.getElementById('loginPage');
         const adminPanel = document.getElementById('adminPanel');
         const studentPanel = document.getElementById('studentPanel');
+        const loadingOverlay = document.getElementById('loadingOverlay');
 
         const usernameInput = document.getElementById('usernameInput');
         const passwordInput = document.getElementById('passwordInput');
@@ -922,6 +1014,9 @@
         const adminTaskList = document.getElementById('adminTaskList');
         const studentTaskList = document.getElementById('studentTaskList');
 
+        const syncDot = document.getElementById('syncDot');
+        const syncText = document.getElementById('syncText');
+
         const startYear = document.getElementById('startYear');
         const startMonth = document.getElementById('startMonth');
         const startDay = document.getElementById('startDay');
@@ -935,6 +1030,110 @@
         const endHour = document.getElementById('endHour');
         const endMinute = document.getElementById('endMinute');
         const endSecond = document.getElementById('endSecond');
+
+        // ====== توابع همگام‌سازی ======
+        function setSyncStatus(status) {
+            if (status === 'loading') {
+                syncDot.className = 'dot yellow';
+                syncText.textContent = 'در حال همگام‌سازی...';
+            } else if (status === 'success') {
+                syncDot.className = 'dot green';
+                syncText.textContent = 'همگام‌سازی شده';
+            } else if (status === 'error') {
+                syncDot.className = 'dot red';
+                syncText.textContent = 'خطا در همگام‌سازی';
+            }
+        }
+
+        function showLoading(show) {
+            if (show) {
+                loadingOverlay.classList.add('active');
+            } else {
+                loadingOverlay.classList.remove('active');
+            }
+        }
+
+        async function loadTasksFromCloud() {
+            try {
+                setSyncStatus('loading');
+                const response = await fetch(API_BASE_URL, { headers });
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        // Bin وجود ندارد، ایجاد می‌کنیم
+                        await createBin();
+                        return await loadTasksFromCloud();
+                    }
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                const data = await response.json();
+                const loadedTasks = data.record?.tasks || [];
+                if (loadedTasks.length > 0) {
+                    tasks = loadedTasks;
+                    // پیدا کردن بزرگترین id
+                    const maxId = tasks.reduce((max, t) => Math.max(max, t.id || 0), 0);
+                    nextId = maxId + 1;
+                } else {
+                    tasks = [];
+                    nextId = 1;
+                }
+                setSyncStatus('success');
+                return true;
+            } catch (error) {
+                console.error('خطا در دریافت داده‌ها:', error);
+                setSyncStatus('error');
+                return false;
+            }
+        }
+
+        async function createBin() {
+            try {
+                const createResponse = await fetch('https://api.jsonbin.io/v3/b', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Master-Key': JSONBIN_API_KEY
+                    },
+                    body: JSON.stringify({ tasks: [] })
+                });
+                if (!createResponse.ok) throw new Error('خطا در ایجاد Bin');
+                const data = await createResponse.json();
+                // ذخیره Bin ID جدید در متغیر (برای استفاده فعلی)
+                // اما کاربر باید Bin ID جدید را در کد جایگذاری کند
+                alert('Bin جدید ساخته شد! لطفاً Bin ID جدید را در کد جایگذاری کنید:\n' + data.id);
+                return data;
+            } catch (error) {
+                console.error('خطا در ایجاد Bin:', error);
+                throw error;
+            }
+        }
+
+        async function saveTasksToCloud() {
+            try {
+                showLoading(true);
+                setSyncStatus('loading');
+                const response = await fetch(API_BASE_URL, {
+                    method: 'PUT',
+                    headers: headers,
+                    body: JSON.stringify({ tasks: tasks })
+                });
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        await createBin();
+                        return await saveTasksToCloud();
+                    }
+                    throw new Error(`HTTP ${response.status}`);
+                }
+                setSyncStatus('success');
+                showLoading(false);
+                return true;
+            } catch (error) {
+                console.error('خطا در ذخیره داده‌ها:', error);
+                setSyncStatus('error');
+                showLoading(false);
+                alert('خطا در ذخیره داده‌ها: ' + error.message);
+                return false;
+            }
+        }
 
         // ====== توابع تاریخ ======
         function getDatetimeFromFields(yearEl, monthEl, dayEl, hourEl, minuteEl, secondEl) {
@@ -1062,7 +1261,7 @@
             adminTaskList.innerHTML = html;
 
             adminTaskList.querySelectorAll('[data-action]').forEach(btn => {
-                btn.addEventListener('click', function(e) {
+                btn.addEventListener('click', async function(e) {
                     e.stopPropagation();
                     const action = this.dataset.action;
                     const id = parseInt(this.dataset.id);
@@ -1074,6 +1273,7 @@
                             tasks = tasks.filter(t => t.id !== id);
                             if (editingId === id) cancelEdit();
                             stopTimer(id);
+                            await saveTasksToCloud();
                             renderAll();
                         }
                     } else if (action === 'edit') {
@@ -1086,12 +1286,15 @@
                         showAddBtn.style.display = 'none';
                     } else if (action === 'hide') {
                         task.hiddenForStudent = true;
+                        await saveTasksToCloud();
                         renderAll();
                     } else if (action === 'show') {
                         task.hiddenForStudent = false;
+                        await saveTasksToCloud();
                         renderAll();
                     } else if (action === 'toggle-complete') {
                         task.completedByStudent = !task.completedByStudent;
+                        await saveTasksToCloud();
                         renderAll();
                     }
                 });
@@ -1168,7 +1371,7 @@
             studentTaskList.innerHTML = html;
 
             studentTaskList.querySelectorAll('[data-action="complete-task"]').forEach(btn => {
-                btn.addEventListener('click', function(e) {
+                btn.addEventListener('click', async function(e) {
                     e.stopPropagation();
                     const id = parseInt(this.dataset.id);
                     const task = tasks.find(t => t.id === id);
@@ -1180,6 +1383,7 @@
                             clearInterval(timerIntervals[id]);
                             delete timerIntervals[id];
                         }
+                        await saveTasksToCloud();
                         renderAll();
                     }
                 });
@@ -1251,7 +1455,7 @@
             resetForm();
         }
 
-        function saveTask() {
+        async function saveTask() {
             const title = taskTitle.value.trim();
             if (!title) {
                 alert('لطفاً عنوان تکلیف را وارد کنید.');
@@ -1290,11 +1494,12 @@
                 });
             }
             resetForm();
+            await saveTasksToCloud();
             renderAll();
         }
 
         // ====== کاربر ======
-        function setUser(role) {
+        async function setUser(role) {
             currentUser = role;
             loginPage.style.display = 'none';
             adminPanel.style.display = 'none';
@@ -1305,6 +1510,17 @@
                 delete timerIntervals[key];
             });
 
+            // بارگذاری داده‌ها از سرور
+            showLoading(true);
+            const success = await loadTasksFromCloud();
+            showLoading(false);
+
+            if (!success) {
+                alert('خطا در ارتباط با سرور. لطفاً دوباره تلاش کنید.');
+                logout();
+                return;
+            }
+
             if (role === 'admin') {
                 adminPanel.style.display = 'block';
                 renderAdminTasks();
@@ -1314,17 +1530,17 @@
             }
         }
 
-        function handleLogin() {
+        async function handleLogin() {
             const user = usernameInput.value.trim();
             const pass = passwordInput.value.trim();
 
             if (user === '' && pass === '') {
-                setUser('student');
+                await setUser('student');
                 return;
             }
 
             if (user === 'admin' && pass === 'admin') {
-                setUser('admin');
+                await setUser('admin');
                 return;
             }
 
