@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سامانه تکالیف</title>
+    <style>
+        @font-face {
+            font-family: 'Vazirmatn';
+            src: url('Vazirmatn-VariableFont_wght.ttf') format('truetype');
+            font-weight: 100 900;
+            font-display: swap;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Vazirmatn', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #e8edff 0%, #f5f7ff 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1250px;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 32px;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(255, 255, 255, 0.6);
+            padding: 2.5rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        #loginPage {
+            max-width: 420px;
+            margin: 0 auto;
+            padding: 1.5rem 0.5rem;
+        }
+
+        #loginPage h2 {
+            text-align: center;
+            font-weight: 800;
+            font-size: 2rem;
+            color: #0f172a;
+            margin-bottom: 0.3rem;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        #loginPage .subtitle {
+            text-align: center;
+            color: #64748b;
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+            font-weight: 400;
+        }
+
+        .login-input-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .login-input-group label {
+            display: block;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+        }
+
+        .login-input-group input {
+            width: 100%;
+            padding: 0.85rem 1.2rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            background: #f8fafc;
+        }
+
+        .login-input-group input:focus {
+            outline: none;
+            border-color: #6366f1;
+            background: white;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.08);
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 0.95rem;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            border: none;
+            border-radius: 40px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            margin-top: 0.8rem;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        .panel {
+            display: none;
+            animation: fadeIn 0.35s ease;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(10px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.2rem;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        .panel-header h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.3px;
+        }
+
+        .panel-header .user-badge {
+            background: #eef2ff;
+            color: #4338ca;
+            padding: 0.4rem 1.4rem;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            border: 1px solid #c7d2fe;
+        }
+
+        .panel-header .header-actions {
+            display: flex;
+            gap: 0.8rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logout-btn {
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            padding: 0.4rem 1.6rem;
+            border-radius: 40px;
+            font-weight: 600;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            font-size: 0.95rem;
+        }
+
+        .logout-btn:hover {
+            background: #fee2e2;
+            border-color: #fca5a5;
+            color: #b91c1c;
+        }
+
+        .add-task-btn {
+            background: linear-gradient(135deg, #6366f1, #7c3aed);
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            margin-bottom: 1.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.25);
+        }
+
+        .add-task-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.35);
+        }
+
+        .task-form {
+            background: #f8fafc;
+            padding: 2rem;
+            border-radius: 24px;
+            margin-bottom: 2rem;
+            display: none;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+        }
+
+        .task-form.show {
+            display: block;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.2rem 1.8rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            padding: 0.75rem 1.2rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            font-size: 0.95rem;
+            background: white;
+            transition: all 0.2s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.06);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 70px;
+        }
+
+        .datetime-section {
+            background: white;
+            border-radius: 16px;
+            padding: 1rem 1.2rem;
+            border: 2px solid #e2e8f0;
+            transition: all 0.2s ease;
+        }
+
+        .datetime-section:focus-within {
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.06);
+        }
+
+        .datetime-section .section-title {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+
+        .datetime-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .datetime-group input[type="number"] {
+            flex: 0 1 auto;
+            min-width: 50px;
+            max-width: 80px;
+            padding: 0.5rem 0.3rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 0.9rem;
+            background: #f8fafc;
+            transition: all 0.15s ease;
+            text-align: center;
+            -moz-appearance: textfield;
+        }
+
+        .datetime-group input[type="number"]:focus {
+            outline: none;
+            border-color: #6366f1;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.06);
+        }
+
+        .datetime-group input[type="number"]::-webkit-outer-spin-button,
+        .datetime-group input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .datetime-separator {
+            color: #94a3b8;
+            font-weight: 300;
+            font-size: 1rem;
+            padding: 0 0.1rem;
+        }
+
+        .form-actions {
+            grid-column: 1 / -1;
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .form-actions button {
+            padding: 0.7rem 2.5rem;
+            border: none;
+            border-radius: 40px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #6366f1, #7c3aed);
+            color: white;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.25);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.35);
+        }
+
+        .btn-cancel {
+            background: #f1f5f9;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+
+        .btn-cancel:hover {
+            background: #e2e8f0;
+        }
+
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .task-item {
+            background: white;
+            border: 1px solid #eef2f6;
+            border-radius: 20px;
+            padding: 1.2rem 1.5rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+            position: relative;
+        }
+
+        .task-item:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+            transform: translateY(-1px);
+        }
+
+        .task-info {
+            flex: 2 1 300px;
+        }
+
+        .task-title {
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: #0f172a;
+        }
+
+        .task-desc {
+            color: #475569;
+            font-size: 0.95rem;
+            margin: 4px 0 6px;
+            white-space: pre-wrap;
+        }
+
+        .task-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.6rem 1.2rem;
+            font-size: 0.82rem;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+        .task-meta span {
+            background: #f1f5f9;
+            padding: 0.1rem 0.7rem;
+            border-radius: 30px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .task-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+
+        .task-actions button {
+            background: transparent;
+            border: 1px solid #e2e8f0;
+            padding: 0.3rem 1.2rem;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            color: #334155;
+        }
+
+        .task-actions button:hover {
+            background: #f1f5f9;
+        }
+
+        .btn-edit {
+            border-color: #f59e0b !important;
+            color: #b45309 !important;
+        }
+        .btn-edit:hover {
+            background: #fef3c7 !important;
+        }
+
+        .btn-delete {
+            border-color: #ef4444 !important;
+            color: #b91c1c !important;
+        }
+        .btn-delete:hover {
+            background: #fee2e2 !important;
+        }
+
+        .btn-hide {
+            border-color: #8b5cf6 !important;
+            color: #6d28d9 !important;
+        }
+        .btn-hide:hover {
+            background: #ede9fe !important;
+        }
+
+        .btn-show {
+            border-color: #10b981 !important;
+            color: #065f46 !important;
+        }
+        .btn-show:hover {
+            background: #d1fae5 !important;
+        }
+
+        .task-hidden-badge {
+            background: #e2e8f0;
+            color: #475569;
+            padding: 0.1rem 0.8rem;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            border: 1px solid #cbd5e1;
+        }
+
+        .no-task {
+            text-align: center;
+            color: #94a3b8;
+            padding: 3rem 0;
+            font-size: 1rem;
+        }
+
+        /* ===== استایل‌های تایمر ===== */
+        .timer-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+            min-width: 120px;
+            padding: 0.5rem;
+            border-radius: 12px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+        }
+
+        .timer-display {
+            font-size: 1.1rem;
+            font-weight: 700;
+            font-family: 'Vazirmatn', monospace;
+            direction: ltr;
+            text-align: center;
+            padding: 0.2rem 0.5rem;
+            border-radius: 8px;
+            min-width: 100px;
+            transition: all 0.3s ease;
+        }
+
+        .timer-green { color: #22c55e; }
+        .timer-green-light { color: #86efac; }
+        .timer-yellow { color: #eab308; }
+        .timer-red-light { color: #f87171; }
+        .timer-red { color: #dc2626; }
+        .timer-alert {
+            color: #dc2626;
+            animation: blink 0.5s ease-in-out infinite alternate;
+            font-weight: 900;
+        }
+
+        @keyframes blink {
+            0% { opacity: 1; transform: scale(1); }
+            100% { opacity: 0.3; transform: scale(0.95); }
+        }
+
+        .timer-status {
+            font-size: 0.65rem;
+            color: #94a3b8;
+            text-align: center;
+        }
+
+        .btn-complete {
+            background: #22c55e !important;
+            color: white !important;
+            border: none !important;
+            padding: 0.4rem 1.2rem !important;
+            border-radius: 30px !important;
+            font-weight: 700 !important;
+            font-size: 0.82rem !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .btn-complete:hover {
+            background: #16a34a !important;
+            transform: scale(1.02);
+        }
+
+        .btn-complete:disabled {
+            background: #94a3b8 !important;
+            cursor: not-allowed !important;
+            transform: none !important;
+        }
+
+        .btn-complete-done {
+            background: #22c55e !important;
+            color: white !important;
+            border: none !important;
+            padding: 0.4rem 1.2rem !important;
+            border-radius: 30px !important;
+            font-weight: 700 !important;
+            font-size: 0.82rem !important;
+            cursor: default !important;
+            opacity: 0.7;
+        }
+
+        .completed-badge {
+            background: #22c55e;
+            color: white;
+            padding: 0.15rem 0.8rem;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .not-completed-badge {
+            background: #ef4444;
+            color: white;
+            padding: 0.15rem 0.8rem;
+            border-radius: 40px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .admin-toggle-btn {
+            background: #6366f1 !important;
+            color: white !important;
+            border: none !important;
+            padding: 0.2rem 1rem !important;
+            border-radius: 30px !important;
+            font-weight: 600 !important;
+            font-size: 0.75rem !important;
+            cursor: pointer !important;
+            transition: all 0.2s ease !important;
+        }
+
+        .admin-toggle-btn:hover {
+            background: #4f46e5 !important;
+        }
+
+        /* ===== استایل‌های جدید پنل هنرجو ===== */
+        .student-task-wrapper {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            border: 1px solid #eef2f6;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+            transition: all 0.2s ease;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: stretch;
+            gap: 1rem;
+        }
+
+        .student-task-wrapper:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+        }
+
+        .student-task-main {
+            flex: 2 1 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .student-task-title {
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: #0f172a;
+        }
+
+        .student-task-desc {
+            color: #475569;
+            font-size: 0.95rem;
+            white-space: pre-wrap;
+        }
+
+        .student-task-times {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem 2rem;
+            margin-top: 0.3rem;
+        }
+
+        .student-time-box {
+            display: flex;
+            flex-direction: column;
+            gap: 0.15rem;
+        }
+
+        .student-time-label {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .student-time-value {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #0f172a;
+            background: #f1f5f9;
+            padding: 0.15rem 0.7rem;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .student-task-extra {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            min-width: 150px;
+            padding: 0.5rem 1rem;
+            background: #f8fafc;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .student-task-footer {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 0.3rem;
+        }
+
+        .student-task-footer span {
+            background: #f1f5f9;
+            padding: 0.1rem 0.7rem;
+            border-radius: 30px;
+            border: 1px solid #e2e8f0;
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        @media (max-width: 768px) {
+            .container { padding: 1.5rem; }
+            .form-grid { grid-template-columns: 1fr; }
+            .task-item { flex-direction: column; align-items: stretch; }
+            .task-actions { justify-content: flex-start; }
+            .panel-header { flex-direction: column; align-items: flex-start; }
+            .datetime-group input[type="number"] { min-width: 45px; max-width: 65px; }
+            .student-task-wrapper { flex-direction: column; }
+            .student-task-extra { min-width: 100px; }
+        }
+
+        @media (max-width: 480px) {
+            .container { padding: 1rem; border-radius: 20px; }
+            .datetime-group input[type="number"] { min-width: 38px; max-width: 55px; padding: 0.4rem 0.2rem; font-size: 0.8rem; }
+            .datetime-section { padding: 0.8rem; }
+            .timer-container { min-width: 80px; }
+            .timer-display { font-size: 0.9rem; min-width: 70px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="appContainer">
+
+    <!-- لاگین -->
+    <div id="loginPage">
+        <h2>سامانه تکالیف</h2>
+        <p class="subtitle">تکالیف کلاس</p>
+        <form id="loginForm" autocomplete="on">
+            <div class="login-input-group">
+                <label>نام کاربری</label>
+                <input type="text" id="usernameInput" placeholder="نام کاربری خود را وارد کنید" autocomplete="username">
+            </div>
+            <div class="login-input-group">
+                <label>رمز عبور</label>
+                <input type="password" id="passwordInput" placeholder="رمز عبور خود را وارد کنید" autocomplete="current-password">
+            </div>
+            <button type="button" class="login-btn" id="loginBtn">ورود به سامانه</button>
+        </form>
+    </div>
+
+    <!-- پنل مدیر -->
+    <div id="adminPanel" class="panel">
+        <div class="panel-header">
+            <h1>پنل مدیریت</h1>
+            <div class="header-actions">
+                <span class="user-badge">مدیر: امیررضا مومنی</span>
+                <button class="logout-btn" id="adminLogout">خروج</button>
+            </div>
+        </div>
+
+        <button class="add-task-btn" id="showAddTaskForm">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+            افزودن تکلیف جدید
+        </button>
+
+        <div id="taskFormContainer" class="task-form">
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label>عنوان تکلیف</label>
+                    <input type="text" id="taskTitle" placeholder="عنوان تکلیف را وارد کنید">
+                </div>
+                <div class="form-group full-width">
+                    <label>توضیحات تکلیف</label>
+                    <textarea id="taskDesc" placeholder="توضیحات کامل تکلیف"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>تاریخ شروع</label>
+                    <div class="datetime-section">
+                        <div class="section-title">تاریخ (روز / ماه / سال)</div>
+                        <div class="datetime-group">
+                            <input type="number" id="startDay" placeholder="روز" min="1" max="31">
+                            <span class="datetime-separator">/</span>
+                            <input type="number" id="startMonth" placeholder="ماه" min="1" max="12">
+                            <span class="datetime-separator">/</span>
+                            <input type="number" id="startYear" placeholder="سال" min="2020" max="2030">
+                        </div>
+                        <div class="section-title" style="margin-top:0.7rem;">زمان (ساعت : دقیقه : ثانیه)</div>
+                        <div class="datetime-group">
+                            <input type="number" id="startHour" placeholder="ساعت" min="0" max="23">
+                            <span class="datetime-separator">:</span>
+                            <input type="number" id="startMinute" placeholder="دقیقه" min="0" max="59">
+                            <span class="datetime-separator">:</span>
+                            <input type="number" id="startSecond" placeholder="ثانیه" min="0" max="59">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>تاریخ پایان مهلت</label>
+                    <div class="datetime-section">
+                        <div class="section-title">تاریخ (روز / ماه / سال)</div>
+                        <div class="datetime-group">
+                            <input type="number" id="endDay" placeholder="روز" min="1" max="31">
+                            <span class="datetime-separator">/</span>
+                            <input type="number" id="endMonth" placeholder="ماه" min="1" max="12">
+                            <span class="datetime-separator">/</span>
+                            <input type="number" id="endYear" placeholder="سال" min="2020" max="2030">
+                        </div>
+                        <div class="section-title" style="margin-top:0.7rem;">زمان (ساعت : دقیقه : ثانیه)</div>
+                        <div class="datetime-group">
+                            <input type="number" id="endHour" placeholder="ساعت" min="0" max="23">
+                            <span class="datetime-separator">:</span>
+                            <input type="number" id="endMinute" placeholder="دقیقه" min="0" max="59">
+                            <span class="datetime-separator">:</span>
+                            <input type="number" id="endSecond" placeholder="ثانیه" min="0" max="59">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button class="btn-submit" id="saveTaskBtn">ثبت تکلیف</button>
+                    <button class="btn-cancel" id="cancelTaskForm">انصراف</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="adminTaskList" class="task-list"></div>
+    </div>
+
+    <!-- پنل هنرجو -->
+    <div id="studentPanel" class="panel">
+        <div class="panel-header">
+            <h1>تکالیف من</h1>
+            <div class="header-actions">
+                <span class="user-badge">>فرشته ترخانی</span>
+                <button class="logout-btn" id="studentLogout">خروج</button>
+            </div>
+        </div>
+        <div id="studentTaskList" class="task-list"></div>
+    </div>
+
+</div>
+
+<script>
+    (function() {
+        let tasks = [];
+        let nextId = 1;
+        let editingId = null;
+        let currentUser = null;
+        let timerIntervals = {};
+
+        const loginPage = document.getElementById('loginPage');
+        const adminPanel = document.getElementById('adminPanel');
+        const studentPanel = document.getElementById('studentPanel');
+
+        const usernameInput = document.getElementById('usernameInput');
+        const passwordInput = document.getElementById('passwordInput');
+        const loginBtn = document.getElementById('loginBtn');
+
+        const adminLogout = document.getElementById('adminLogout');
+        const studentLogout = document.getElementById('studentLogout');
+
+        const showAddBtn = document.getElementById('showAddTaskForm');
+        const taskFormContainer = document.getElementById('taskFormContainer');
+        const taskTitle = document.getElementById('taskTitle');
+        const taskDesc = document.getElementById('taskDesc');
+        const saveTaskBtn = document.getElementById('saveTaskBtn');
+        const cancelTaskBtn = document.getElementById('cancelTaskForm');
+
+        const adminTaskList = document.getElementById('adminTaskList');
+        const studentTaskList = document.getElementById('studentTaskList');
+
+        const startYear = document.getElementById('startYear');
+        const startMonth = document.getElementById('startMonth');
+        const startDay = document.getElementById('startDay');
+        const startHour = document.getElementById('startHour');
+        const startMinute = document.getElementById('startMinute');
+        const startSecond = document.getElementById('startSecond');
+
+        const endYear = document.getElementById('endYear');
+        const endMonth = document.getElementById('endMonth');
+        const endDay = document.getElementById('endDay');
+        const endHour = document.getElementById('endHour');
+        const endMinute = document.getElementById('endMinute');
+        const endSecond = document.getElementById('endSecond');
+
+        // ====== توابع تاریخ ======
+        function getDatetimeFromFields(yearEl, monthEl, dayEl, hourEl, minuteEl, secondEl) {
+            const y = parseInt(yearEl.value);
+            const m = parseInt(monthEl.value);
+            const d = parseInt(dayEl.value);
+            const h = parseInt(hourEl.value) || 0;
+            const min = parseInt(minuteEl.value) || 0;
+            const sec = parseInt(secondEl.value) || 0;
+            
+            if (!y || !m || !d) return null;
+            if (y < 2020 || y > 2030) return null;
+            if (m < 1 || m > 12) return null;
+            if (d < 1 || d > 31) return null;
+            
+            const date = new Date(y, m - 1, d, h, min, sec);
+            if (isNaN(date)) return null;
+            return date.toISOString().slice(0, 16);
+        }
+
+        function setDatetimeFields(yearEl, monthEl, dayEl, hourEl, minuteEl, secondEl, datetimeStr) {
+            if (!datetimeStr) {
+                [yearEl, monthEl, dayEl, hourEl, minuteEl, secondEl].forEach(el => el.value = '');
+                return;
+            }
+            const d = new Date(datetimeStr);
+            if (isNaN(d)) return;
+            yearEl.value = d.getFullYear();
+            monthEl.value = d.getMonth() + 1;
+            dayEl.value = d.getDate();
+            hourEl.value = String(d.getHours()).padStart(2, '0');
+            minuteEl.value = String(d.getMinutes()).padStart(2, '0');
+            secondEl.value = String(d.getSeconds()).padStart(2, '0');
+        }
+
+        function formatDate(gregorianDateStr) {
+            if (!gregorianDateStr) return '—';
+            const d = new Date(gregorianDateStr);
+            if (isNaN(d)) return gregorianDateStr;
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            const hours = String(d.getHours()).padStart(2, '0');
+            const minutes = String(d.getMinutes()).padStart(2, '0');
+            const seconds = String(d.getSeconds()).padStart(2, '0');
+            return `${year}/${month}/${day} , ${hours}:${minutes}:${seconds}`;
+        }
+
+        // ====== توابع تایمر ======
+        function getTimeRemaining(endTime) {
+            const now = new Date();
+            const end = new Date(endTime);
+            const diff = end - now;
+            if (diff <= 0) return { total: 0, days: 0, hours: 0, minutes: 0, seconds: 0 };
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            return { total: diff, days, hours, minutes, seconds };
+        }
+
+        function getTimerColor(remaining, isCompleted) {
+            if (isCompleted) return '';
+            const hours = remaining.total / (1000 * 60 * 60);
+            if (hours > 20) return 'timer-green';
+            if (hours > 15) return 'timer-green-light';
+            if (hours > 10) return 'timer-yellow';
+            if (hours > 5) return 'timer-red-light';
+            if (hours > 1/60) return 'timer-red';
+            if (remaining.total > 0) return 'timer-alert';
+            return '';
+        }
+
+        function formatTimeDisplay(remaining) {
+            if (remaining.total <= 0) return '00:00:00';
+            const h = String(remaining.hours).padStart(2, '0');
+            const m = String(remaining.minutes).padStart(2, '0');
+            const s = String(remaining.seconds).padStart(2, '0');
+            return `${h}:${m}:${s}`;
+        }
+
+        // ====== رندرها ======
+        function getVisibleTasksForStudent() {
+            return tasks.filter(t => !t.hiddenForStudent);
+        }
+
+        function renderAdminTasks() {
+            if (tasks.length === 0) {
+                adminTaskList.innerHTML = `<div class="no-task">هیچ تکلیفی ثبت نشده است.</div>`;
+                return;
+            }
+            let html = '';
+            tasks.forEach(task => {
+                const hiddenBadge = task.hiddenForStudent ? `<span class="task-hidden-badge">مخفی</span>` : '';
+                const isCompleted = task.completedByStudent || false;
+                const statusText = isCompleted ? 'آره' : 'نه';
+                const statusClass = isCompleted ? 'completed-badge' : 'not-completed-badge';
+                
+                html += `
+                    <div class="task-item" data-id="${task.id}">
+                        <div class="task-info">
+                            <div class="task-title">${task.title}</div>
+                            <div class="task-desc">${task.desc || ''}</div>
+                            <div class="task-meta">
+                                <span>شروع: ${formatDate(task.start)}</span>
+                                <span>پایان: ${formatDate(task.end)}</span>
+                                <span class="${statusClass}">هنر جو تکلیف رو به پایان رسانده است؟ ${statusText}</span>
+                                ${hiddenBadge}
+                            </div>
+                        </div>
+                        <div class="task-actions">
+                            <button class="btn-edit" data-action="edit" data-id="${task.id}">ویرایش</button>
+                            <button class="btn-delete" data-action="delete" data-id="${task.id}">حذف</button>
+                            ${task.hiddenForStudent ?
+                                `<button class="btn-show" data-action="show" data-id="${task.id}">نمایش مجدد</button>` :
+                                `<button class="btn-hide" data-action="hide" data-id="${task.id}">عدم نمایش</button>`
+                            }
+                            <button class="admin-toggle-btn" data-action="toggle-complete" data-id="${task.id}">
+                                ${isCompleted ? 'عدم اتمام' : 'اتمام'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            adminTaskList.innerHTML = html;
+
+            adminTaskList.querySelectorAll('[data-action]').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const action = this.dataset.action;
+                    const id = parseInt(this.dataset.id);
+                    const task = tasks.find(t => t.id === id);
+                    if (!task) return;
+
+                    if (action === 'delete') {
+                        if (confirm('آیا از حذف این تکلیف اطمینان دارید؟')) {
+                            tasks = tasks.filter(t => t.id !== id);
+                            if (editingId === id) cancelEdit();
+                            stopTimer(id);
+                            renderAll();
+                        }
+                    } else if (action === 'edit') {
+                        editingId = id;
+                        taskTitle.value = task.title;
+                        taskDesc.value = task.desc || '';
+                        setDatetimeFields(startYear, startMonth, startDay, startHour, startMinute, startSecond, task.start);
+                        setDatetimeFields(endYear, endMonth, endDay, endHour, endMinute, endSecond, task.end);
+                        taskFormContainer.classList.add('show');
+                        showAddBtn.style.display = 'none';
+                    } else if (action === 'hide') {
+                        task.hiddenForStudent = true;
+                        renderAll();
+                    } else if (action === 'show') {
+                        task.hiddenForStudent = false;
+                        renderAll();
+                    } else if (action === 'toggle-complete') {
+                        task.completedByStudent = !task.completedByStudent;
+                        renderAll();
+                    }
+                });
+            });
+        }
+
+        function renderStudentTasks() {
+            const visible = getVisibleTasksForStudent();
+            if (visible.length === 0) {
+                studentTaskList.innerHTML = `<div class="no-task">هیچ تکلیفی برای نمایش وجود ندارد.</div>`;
+                return;
+            }
+            let html = '';
+            visible.forEach(task => {
+                const remaining = getTimeRemaining(task.end);
+                const isCompleted = task.completedByStudent || false;
+                const isExpired = remaining.total <= 0;
+                const colorClass = getTimerColor(remaining, isCompleted);
+                
+                let timerHtml = '';
+                if (isCompleted) {
+                    timerHtml = `<div class="timer-container">
+                        <div class="timer-display" style="color: #22c55e;">تکمیل شد</div>
+                        <div class="timer-status">✓ انجام شده</div>
+                    </div>`;
+                } else if (isExpired) {
+                    timerHtml = `<div class="timer-container">
+                        <div class="timer-display" style="color: #ef4444;">زمان پایان</div>
+                        <div class="timer-status">تایم زدن دکمه "تکلیف رو تمام کرده ام!" به پایان رسیده است</div>
+                    </div>`;
+                } else {
+                    const timeStr = formatTimeDisplay(remaining);
+                    timerHtml = `<div class="timer-container">
+                        <div class="timer-display ${colorClass}" id="timer-${task.id}">${timeStr}</div>
+                        <div class="timer-status">زمان باقی‌مانده</div>
+                    </div>`;
+                }
+
+                let completeBtnHtml = '';
+                if (isCompleted) {
+                    completeBtnHtml = `<button class="btn-complete-done" disabled>✓ انجام شده</button>`;
+                } else if (isExpired) {
+                    completeBtnHtml = `<button class="btn-complete" disabled style="background:#94a3b8 !important;">تایم پایان</button>`;
+                } else {
+                    completeBtnHtml = `<button class="btn-complete" data-action="complete-task" data-id="${task.id}">تکلیف را تمام کرده ام!</button>`;
+                }
+
+                html += `
+                    <div class="student-task-wrapper" data-id="${task.id}">
+                        <div class="student-task-main">
+                            <div class="student-task-title">${task.title}</div>
+                            <div class="student-task-desc">${task.desc || ''}</div>
+                            <div class="student-task-times">
+                                <div class="student-time-box">
+                                    <span class="student-time-label">تاریخ تکمیل</span>
+                                    <span class="student-time-value">${formatDate(task.start)}</span>
+                                </div>
+                                <div class="student-time-box">
+                                    <span class="student-time-label">پایان مهلت</span>
+                                    <span class="student-time-value">${formatDate(task.end)}</span>
+                                </div>
+                            </div>
+                            <div class="student-task-footer">
+                                <span><strong>ثبت‌کننده:</strong> امیررضا مومنی</span>
+                            </div>
+                        </div>
+                        <div class="student-task-extra">
+                            ${timerHtml}
+                            ${completeBtnHtml}
+                        </div>
+                    </div>
+                `;
+            });
+            studentTaskList.innerHTML = html;
+
+            studentTaskList.querySelectorAll('[data-action="complete-task"]').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const id = parseInt(this.dataset.id);
+                    const task = tasks.find(t => t.id === id);
+                    if (!task) return;
+                    
+                    if (confirm('مطمئن هستید که تکلیف را کامل کرده‌اید؟')) {
+                        task.completedByStudent = true;
+                        if (timerIntervals[id]) {
+                            clearInterval(timerIntervals[id]);
+                            delete timerIntervals[id];
+                        }
+                        renderAll();
+                    }
+                });
+            });
+
+            visible.forEach(task => {
+                if (!task.completedByStudent && getTimeRemaining(task.end).total > 0) {
+                    startTimer(task.id);
+                }
+            });
+        }
+
+        function renderAll() {
+            if (currentUser === 'admin') {
+                renderAdminTasks();
+            } else if (currentUser === 'student') {
+                renderStudentTasks();
+            }
+        }
+
+        // ====== توابع تایمر ======
+        function startTimer(taskId) {
+            if (timerIntervals[taskId]) {
+                clearInterval(timerIntervals[taskId]);
+            }
+            timerIntervals[taskId] = setInterval(() => {
+                const task = tasks.find(t => t.id === taskId);
+                if (!task || task.completedByStudent || currentUser !== 'student') {
+                    clearInterval(timerIntervals[taskId]);
+                    delete timerIntervals[taskId];
+                    return;
+                }
+                const remaining = getTimeRemaining(task.end);
+                if (remaining.total <= 0) {
+                    clearInterval(timerIntervals[taskId]);
+                    delete timerIntervals[taskId];
+                    renderAll();
+                    return;
+                }
+                const timerEl = document.getElementById(`timer-${taskId}`);
+                if (timerEl) {
+                    const timeStr = formatTimeDisplay(remaining);
+                    const colorClass = getTimerColor(remaining, false);
+                    timerEl.textContent = timeStr;
+                    timerEl.className = `timer-display ${colorClass}`;
+                }
+            }, 1000);
+        }
+
+        function stopTimer(taskId) {
+            if (timerIntervals[taskId]) {
+                clearInterval(timerIntervals[taskId]);
+                delete timerIntervals[taskId];
+            }
+        }
+
+        // ====== فرم ======
+        function resetForm() {
+            taskTitle.value = '';
+            taskDesc.value = '';
+            [startYear, startMonth, startDay, startHour, startMinute, startSecond,
+             endYear, endMonth, endDay, endHour, endMinute, endSecond].forEach(el => el.value = '');
+            editingId = null;
+            taskFormContainer.classList.remove('show');
+            showAddBtn.style.display = 'inline-flex';
+        }
+
+        function cancelEdit() {
+            resetForm();
+        }
+
+        function saveTask() {
+            const title = taskTitle.value.trim();
+            if (!title) {
+                alert('لطفاً عنوان تکلیف را وارد کنید.');
+                return;
+            }
+
+            const startDatetime = getDatetimeFromFields(startYear, startMonth, startDay, startHour, startMinute, startSecond);
+            const endDatetime = getDatetimeFromFields(endYear, endMonth, endDay, endHour, endMinute, endSecond);
+
+            if (!startDatetime) {
+                alert('لطفاً تاریخ و ساعت شروع را به صورت کامل و معتبر وارد کنید.');
+                return;
+            }
+            if (!endDatetime) {
+                alert('لطفاً تاریخ و ساعت پایان مهلت را به صورت کامل و معتبر وارد کنید.');
+                return;
+            }
+
+            if (editingId !== null) {
+                const task = tasks.find(t => t.id === editingId);
+                if (task) {
+                    task.title = title;
+                    task.desc = taskDesc.value.trim();
+                    task.start = startDatetime;
+                    task.end = endDatetime;
+                }
+            } else {
+                tasks.push({
+                    id: nextId++,
+                    title: title,
+                    desc: taskDesc.value.trim(),
+                    start: startDatetime,
+                    end: endDatetime,
+                    hiddenForStudent: false,
+                    completedByStudent: false,
+                });
+            }
+            resetForm();
+            renderAll();
+        }
+
+        // ====== کاربر ======
+        function setUser(role) {
+            currentUser = role;
+            loginPage.style.display = 'none';
+            adminPanel.style.display = 'none';
+            studentPanel.style.display = 'none';
+
+            Object.keys(timerIntervals).forEach(key => {
+                clearInterval(timerIntervals[key]);
+                delete timerIntervals[key];
+            });
+
+            if (role === 'admin') {
+                adminPanel.style.display = 'block';
+                renderAdminTasks();
+            } else if (role === 'student') {
+                studentPanel.style.display = 'block';
+                renderStudentTasks();
+            }
+        }
+
+        function handleLogin() {
+            const user = usernameInput.value.trim();
+            const pass = passwordInput.value.trim();
+
+            if (user === '' && pass === '') {
+                setUser('student');
+                return;
+            }
+
+            if (user === 'admin' && pass === 'admin') {
+                setUser('admin');
+                return;
+            }
+
+            alert('نام کاربری یا رمز عبور اشتباه است.');
+        }
+
+        function logout() {
+            currentUser = null;
+            loginPage.style.display = 'block';
+            adminPanel.style.display = 'none';
+            studentPanel.style.display = 'none';
+            usernameInput.value = '';
+            passwordInput.value = '';
+            resetForm();
+            Object.keys(timerIntervals).forEach(key => {
+                clearInterval(timerIntervals[key]);
+                delete timerIntervals[key];
+            });
+        }
+
+        // ====== رویدادها ======
+        loginBtn.addEventListener('click', handleLogin);
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && loginPage.style.display !== 'none') {
+                handleLogin();
+            }
+        });
+
+        adminLogout.addEventListener('click', logout);
+        studentLogout.addEventListener('click', logout);
+
+        showAddBtn.addEventListener('click', function() {
+            resetForm();
+            editingId = null;
+            taskFormContainer.classList.add('show');
+            showAddBtn.style.display = 'none';
+        });
+
+        cancelTaskBtn.addEventListener('click', resetForm);
+        saveTaskBtn.addEventListener('click', saveTask);
+
+        // ====== راه‌اندازی ======
+        loginPage.style.display = 'block';
+        adminPanel.style.display = 'none';
+        studentPanel.style.display = 'none';
+    })();
+</script>
+</body>
+</html>
